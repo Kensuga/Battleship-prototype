@@ -3,11 +3,32 @@
   height: 50px;
   background-color: blue;
   border: 2px solid black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
 }
 
 .squareIt {
   /* display:flex;
   flex-wrap: wrap; */
-  display: grid;
-  grid-template-columns: repeat(auto-fill,minmax(100px, 0fr));
+  width: 580px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.centerBoard {
+  display: flex;
+  justify-content: center;
+}
+
+.header {
+  display: flex;
+  justify-content: center;
+}
+
+.outerBox {
+  background-color: aqua;
+  border: 2px solid black;
 }

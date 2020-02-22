@@ -6,6 +6,7 @@ class App extends Component {
   render(){
     return (
       <div>
+        <h1 className = "header">⛴ BattleShip ⛴</h1>
         <Game />
       </div>
     );
