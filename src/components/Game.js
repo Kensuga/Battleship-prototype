@@ -6,11 +6,15 @@ class Game extends Component {
     constructor(){
         super()
         //This is our ships, and how big they are
-        this.listOfShips = [4,3,2]
+        this.listOfShips = [4,3,2,5,3]
         this.state = {
             //Will have our final array of ships populated in it
             gameBoard: this.bigFunction(),
-            shipHealth: this.listOfShips
+            shipHealth: this.listOfShips,
+            ammo: 35,
+            canShoot: 0,
+            winStatus: "",
+            deathCounter: 0
         }
     }
 
@@ -149,7 +153,10 @@ class Game extends Component {
                 <Box 
                     value = {value}
                     index = {index}
+                    ammo = { this.state.ammo }
+                    canShoot = { this.state.canShoot }
                     tempFunt = { this.tempFunt }
+                    winCheck = {this.winCheck}
                 />)}
             ));
         }
@@ -158,33 +165,85 @@ class Game extends Component {
         return finalArr
     }
 
-    tempFunt = (value) => {
+    tempFunt = (value, ammo) => {
+        let temp = this.state.deathCounter
+        console.log(temp);
+        
         if (  this.listOfShips[value-1] !== 0){
             this.listOfShips[value-1] -= 1;
             this.setState({shipHealth: this.listOfShips})
-            console.log(this.state.shipHealth)
+            if (this.state.shipHealth[value-1] === 0){
+                temp += 1;
+                console.log(temp);
+                
+                this.setState({ deathCounter : temp })
+                console.log(this.state.deathCounter);
+                console.log(this.state.shipHealth.length);
+                
+                if( this.state.deathCounter === this.state.shipHealth.length-1){
+                    this.setState({ winStatus: true})
+                }
+            }
+        }
+        if (ammo > 0){
+            let currAmmo = ammo;
+            currAmmo -= 1;
+            this.setState({ ammo : currAmmo })
+            if (currAmmo-1 === 0){
+                this.setState({ winStatus: false})
+            }
+            console.log(this.state.ammo);
         }
     }
+    
+    shipsHPArray(arr) {
+        let shipArray = [];
+        let healthArray = [];
+        let noComma = []
 
+        for (let i = 0; i < this.listOfShips.length; i++){
+            for (let j = 0; j< arr[i]; j++){
+                if(this.state.shipHealth[i] === 0){
+                    noComma = "☠️"
+                }
+                healthArray.push("❤️")
+                noComma = healthArray.join("");
+
+            }
+            shipArray.push(`🚢 HP: ${noComma}`, <br/>)
+            healthArray = [];
+        }
+        return shipArray
+    }
 
     render(){
-        let start = this.boxPopulation(this.state.gameBoard)
+        let start = this.boxPopulation(this.state.gameBoard);
+        let shipHP = this.shipsHPArray(this.state.shipHealth);
         return (
-            <div className = "centerBoard">
-                <div>
-
-                    <span className = "squareIt">
-                        { start }
-                    </span>
-                    <p className = "outerBox">
-                        Enemy Ship Health: <br/>
-                        <br/>
-                        Ship 1: {this.state.shipHealth[0]} <br/>
-                        Ship 2: {this.state.shipHealth[1]} <br/>
-                        Ship 3: {this.state.shipHealth[2]} <br/>
-                    </p>
+            <div>
+                <div className = "centerBoard">
+                    <div className = "wrap">
+                        <p className = "outerBox">
+                            Ammo: {this.state.ammo}
+                        </p>
+                        <span className = "squareIt">
+                            { start }
+                        </span>
+                        <p className = "outerBox">
+                            Enemy Ship Health: <br/>
+                            <br/>
+                            { shipHP } <br/>
+                        </p>
+                    </div>
                 </div>
-
+                <div>
+                    {this.state.winStatus === true &&
+                        <span className = "endText onTopLoser">You Win</span>
+                    }
+                    {this.state.winStatus === false &&
+                        <span className = "endText onTopLoser">You Lose</span>
+                    }
+                </div>
             </div>
         );
     }
