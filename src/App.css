@@ -77,6 +77,18 @@ body {
   color: white;
 }
 
+.onTopWinner {
+  position: absolute;
+  top: 0;
+  margin: 10% 37%;
+  padding: 3% 0% 5% 3%;
+  width: 400px;
+  background-color: rgba(0, 0, 55, 1);
+  border: 2px solid black;
+  border-radius: 5%;
+  color: white;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -85,4 +97,10 @@ body {
 
 .wrap {
   display: flex;
+}
+
+.centerMessage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

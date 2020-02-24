@@ -11,7 +11,7 @@ class Game extends Component {
             //Will have our final array of ships populated in it
             gameBoard: this.bigFunction(),
             shipHealth: this.listOfShips,
-            ammo: 35,
+            ammo: 99,
             canShoot: 0,
             winStatus: "",
             deathCounter: 0
@@ -236,9 +236,9 @@ class Game extends Component {
                         </p>
                     </div>
                 </div>
-                <div>
+                <div className = "centerMessage">
                     {this.state.winStatus === true &&
-                        <span className = "endText onTopLoser">You Win</span>
+                        <span className = "endText onTopWinner">You Win</span>
                     }
                     {this.state.winStatus === false &&
                         <span className = "endText onTopLoser">You Lose</span>
