@@ -68,7 +68,7 @@ body {
 .onTopLoser {
   position: absolute;
   top: 0;
-  margin: 10% 37%;
+  margin: 10% 0%;
   padding: 3% 0% 5% 5%;
   width: 400px;
   background-color: rgba(0, 0, 55, 1);
@@ -79,8 +79,7 @@ body {
 
 .onTopWinner {
   position: absolute;
-  top: 0;
-  margin: 10% 37%;
+  margin: 10% 0%;
   padding: 3% 0% 5% 3%;
   width: 400px;
   background-color: rgba(0, 0, 55, 1);
@@ -103,4 +102,18 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.healthDisplay {
+  display: flex;
+  flex-direction: column;
+  justify-content: left;
+}
+
+.ammoDisplay {
+  display: flex;
+  flex-direction: column;
+  justify-content: top;
+  align-items: center;
+  width: 100px;
 }

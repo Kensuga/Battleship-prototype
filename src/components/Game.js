@@ -10,11 +10,12 @@ class Game extends Component {
         this.state = {
             //Will have our final array of ships populated in it
             gameBoard: this.bigFunction(),
-            shipHealth: this.listOfShips,
-            ammo: 99,
+            shipHealth: this.shipsHPArray(this.listOfShips),
+            ammo: 50,
             canShoot: 0,
             winStatus: "",
-            deathCounter: 0
+            deathCounter: 1,
+            taco: ""
         }
     }
 
@@ -35,30 +36,37 @@ class Game extends Component {
 
         //Lets us see the populated array
         console.log(tempArray)
-
+        //Check to see if our collision worked
         let check = this.checkYourWork(tempArray)
 
+        //If the collision didnt work, try again until you do
         while (check === false){
             tempArray =  this.bigFunction();
             check = this.checkYourWork(tempArray);
         }
-
         return tempArray; 
     }
 
+    //Make sure the collission did its job
     checkYourWork = (arr) => {
         let x = 0;
+        //Add all the values in the array together
         for (let i = 0; i < this.listOfShips.length; i++){
             x += this.listOfShips[i]; 
         }
+
+        //A tracker to see how many elements are not 0
         let y = 0;
         for(let i = 0; i < arr.length; i++){
             for(let j = 0; j<arr[i].length; j++){
                 if (arr[i][j] !== 0){
+                    //If you are not 0, add to the tracker
                     y += 1;
                 }
             }
         }
+
+        //If we do not have matching numbers, our collision didnt work properly
         if (x !== y){
             return false;
         } else if (x === y) {
@@ -105,49 +113,52 @@ class Game extends Component {
             //I create a loop to check every index for the size of my ship
             for(let i = 0; i<arg; i++){
                 //I create a variable to return my boolean statement
-                let x = "";
+                let ourBoolean = "";
                 //I make sure that the place I am checking exists in my array
                 if (rI1+i < arr.length-1 && rI1+arg < arr.length-i){
                     //I check if the value I am looking at is not a 0
                     if (arr[rI1+i][rI2] !== 0){
                         //If I am not a 0, do not write
-                        x = false;
+                        ourBoolean = false;
                     } else{
                         //I am a 0, go ahead and write
-                        x = true;
+                        ourBoolean = true;
                     }
                 } else {
                     //I dont exist in the array, dont write anything
-                    x = false;
+                    ourBoolean = false;
                 }
                 //Return my boolean at the end of my loops
-                if (i+1 === arg){ return x}
+                if (i+1 === arg){ return ourBoolean}
             }// Horizontal Checking below
         } else if (coin === 1){
             //I create a loop to check every index for the size of my ship
             for(let i = 0; i<arg; i++){
                 //I create a variable to return my boolean statement
-                let x = "";
+                let ourBoolean = "";
                 //I make sure the place I am checking exists in my array
                 if (rI2+i < arr.length-1 && rI2+arg < arr.length-i){
                     //I check fi the value I am looking at is not a 0
                     if (arr[rI1][rI2+i] !== 0){
                         //If I am not a 0, do not write
-                        x = false;
+                        ourBoolean = false;
                     } else{
                         //I am a 0, go ahead and write
-                        x = true;
+                        ourBoolean = true;
                     }
                     //I dont exist in the array, dont write anything
-                } else { x = false;}
+                } else { ourBoolean = false;}
                 //Return my boolean at the end of my loops
-                if (i+1 === arg){ return x}
+                if (i+1 === arg){ return ourBoolean}
             }
         }
     }
 
+    //Lets fill our 2d array with boxes
     boxPopulation(arr) {
+        //Start with a blank box
         let finalArr = [];
+        //For every array, we map an array of boxes
         for( let i = 0; i < arr.length; i++){
             finalArr.push(arr[i].map((value,index) => {return(
                 <Box 
@@ -155,88 +166,133 @@ class Game extends Component {
                     index = {index}
                     ammo = { this.state.ammo }
                     canShoot = { this.state.canShoot }
-                    tempFunt = { this.tempFunt }
+                    clickFunction = { this.clickFunction }
                     winCheck = {this.winCheck}
                 />)}
             ));
         }
-
         console.log(finalArr)
         return finalArr
     }
 
-    tempFunt = (value, ammo) => {
-        let temp = this.state.deathCounter
-        console.log(temp);
-        
-        if (  this.listOfShips[value-1] !== 0){
-            this.listOfShips[value-1] -= 1;
-            this.setState({shipHealth: this.listOfShips})
-            if (this.state.shipHealth[value-1] === 0){
-                temp += 1;
-                console.log(temp);
-                
-                this.setState({ deathCounter : temp })
-                console.log(this.state.deathCounter);
-                console.log(this.state.shipHealth.length);
-                
-                if( this.state.deathCounter === this.state.shipHealth.length-1){
-                    this.setState({ winStatus: true})
+    //Things we want to happen in the on click event
+    clickFunction = (value, ammo) => {
+        //Keep track of how many ships are dead
+        let shipHit = this.state.deathCounter
+
+        //Add one to our ship hit counter if they hit a ship
+        if(value !== 0){
+            shipHit += 1;
+            //Reassign Death counter for later use
+            this.setState({ deathCounter: shipHit})            
+        }
+
+        //Get how many ships exist in our board
+        let nubmerOfShips = 0;
+        for(let i = 0; i < this.state.gameBoard.length; i++){
+            for(let j = 0; j<this.state.gameBoard[i].length; j++){
+                if (this.state.gameBoard[i][j] !== 0){
+                    //If you are not 0, add to the tracker
+                    nubmerOfShips += 1;
+                    
                 }
             }
         }
+
+        if (this.state.deathCounter === nubmerOfShips){
+            this.setState({ winStatus: true })
+            console.log(this.state.winStatus);
+            
+        }
+
+        //This is broken - WIP
+        for(let i = 0; i < this.state.shipHealth.length; i++){
+            let newVal = (value-1)*2
+            if(i === newVal){
+                let newHealth = this.state.shipHealth
+                let newHealthElement = newHealth[i];
+                let removeHeart = newHealthElement.split("")
+                removeHeart.pop()
+                removeHeart.pop()
+                newHealth[i] = removeHeart.join("")             
+                this.setState({shipHealth: newHealth})
+            }
+            
+        }
+
+        //Ammo Tracker
         if (ammo > 0){
             let currAmmo = ammo;
             currAmmo -= 1;
-            this.setState({ ammo : currAmmo })
-            if (currAmmo-1 === 0){
+            this.setState({ ammo: currAmmo })            
+            //If we are out of ammo you lose
+            if (currAmmo === 0){
                 this.setState({ winStatus: false})
             }
-            console.log(this.state.ammo);
         }
     }
     
+    //Create the hp display
     shipsHPArray(arr) {
         let shipArray = [];
         let healthArray = [];
         let noComma = []
 
+        //Create an array to hold all of the health
         for (let i = 0; i < this.listOfShips.length; i++){
             for (let j = 0; j< arr[i]; j++){
-                if(this.state.shipHealth[i] === 0){
-                    noComma = "☠️"
-                }
+                //Push the hearts equal to the ship size into a string
                 healthArray.push("❤️")
                 noComma = healthArray.join("");
-
             }
+            //Take that string above and push that with our other text into a single string in the array
             shipArray.push(`🚢 HP: ${noComma}`, <br/>)
             healthArray = [];
         }
+        //Returns our final array of strings
         return shipArray
     }
 
+    seeAmmo = () => {
+        let visAmm = []
+
+        for(let i = 0; i < this.state.ammo ; i++){
+            visAmm.push("💣")
+        }  
+        return visAmm;
+    }
+
     render(){
+        //Render our gameboard onto the screen
         let start = this.boxPopulation(this.state.gameBoard);
-        let shipHP = this.shipsHPArray(this.state.shipHealth);
+        let healthMap = this.state.shipHealth.map(value => value)
+        
         return (
+            //This is a huge css mess to make it look kinda pretty sometimes
             <div>
                 <div className = "centerBoard">
                     <div className = "wrap">
-                        <p className = "outerBox">
-                            Ammo: {this.state.ammo}
-                        </p>
+                        <span className = "outerBox">
+                            <p className = "ammoDisplay">
+                                Ammo: {this.state.ammo} <br/>
+                                <br/>
+                                {this.seeAmmo()}
+                            </p>
+                        </span>
                         <span className = "squareIt">
                             { start }
                         </span>
-                        <p className = "outerBox">
+                        <span className = "outerBox">
+                            <p className = "healthDisplay">
                             Enemy Ship Health: <br/>
                             <br/>
-                            { shipHP } <br/>
-                        </p>
+                            { healthMap }<br/>
+                            </p>
+                        </span> 
                     </div>
                 </div>
                 <div className = "centerMessage">
+                    {/* If we won, show we won, if we lost, show we lost. */}
                     {this.state.winStatus === true &&
                         <span className = "endText onTopWinner">You Win</span>
                     }
